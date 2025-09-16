@@ -32,7 +32,7 @@ const page = `<!DOCTYPE html>
                   id="startPrice"
                   name="startPrice"
                   type="number"
-                  step="0.01"
+                  step="0.000001"
                   min="0"
                   required
                   class="w-full rounded-2xl border border-slate-700 bg-slate-950 py-3 pl-8 pr-4 text-base text-slate-100 placeholder:text-slate-500 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
@@ -49,7 +49,7 @@ const page = `<!DOCTYPE html>
                   id="endPrice"
                   name="endPrice"
                   type="number"
-                  step="0.01"
+                  step="0.000001"
                   min="0"
                   required
                   class="w-full rounded-2xl border border-slate-700 bg-slate-950 py-3 pl-8 pr-4 text-base text-slate-100 placeholder:text-slate-500 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
@@ -96,14 +96,47 @@ const page = `<!DOCTYPE html>
       const percentageChange = document.getElementById('percentageChange');
       const directionLabel = document.getElementById('directionLabel');
 
+      const MAX_DECIMAL_PLACES = 6;
+
+      const limitDecimalPlaces = (value, decimalPlaces = MAX_DECIMAL_PLACES) => {
+        if (value === 0) {
+          return 0;
+        }
+
+        const factor = 10 ** decimalPlaces;
+        const epsilonAdjusted = value + (value > 0 ? Number.EPSILON : -Number.EPSILON);
+        const rounded = Math.round(epsilonAdjusted * factor) / factor;
+        return Object.is(rounded, -0) ? 0 : rounded;
+      };
+
       const formatCurrency = (value, withSign = false) => {
-        return new Intl.NumberFormat('zh-CN', {
-          style: 'currency',
-          currency: 'CNY',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-          signDisplay: withSign ? 'always' : 'auto'
-        }).format(value);
+        if (!Number.isFinite(value)) {
+          return '--';
+        }
+
+        const normalized = limitDecimalPlaces(value);
+        const sign = normalized < 0 ? '-' : withSign && normalized > 0 ? '+' : '';
+        const formattedNumber = Math.abs(normalized).toLocaleString('zh-CN', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: MAX_DECIMAL_PLACES
+        });
+
+        return sign + '¥' + formattedNumber;
+      };
+
+      const formatPercentage = (value) => {
+        if (!Number.isFinite(value)) {
+          return '--';
+        }
+
+        const normalized = limitDecimalPlaces(value);
+        const sign = normalized > 0 ? '+' : normalized < 0 ? '-' : '';
+        const formattedNumber = Math.abs(normalized).toLocaleString('zh-CN', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: MAX_DECIMAL_PLACES
+        });
+
+        return sign + formattedNumber + '%';
       };
 
       form.addEventListener('submit', (event) => {
@@ -122,8 +155,8 @@ const page = `<!DOCTYPE html>
         const difference = end - start;
         const percent = (difference / start) * 100;
         const formattedDifference = formatCurrency(difference, true);
-        const formattedPercent = (percent > 0 ? '+' : percent < 0 ? '-' : '') +
-          Math.abs(percent).toFixed(2) + '%';
+        
+        const formattedPercent = formatPercentage(percent);
 
         absoluteChange.textContent = formattedDifference;
         percentageChange.textContent = formattedPercent;

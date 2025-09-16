@@ -155,6 +155,7 @@ const page = `<!DOCTYPE html>
         const difference = end - start;
         const percent = (difference / start) * 100;
         const formattedDifference = formatCurrency(difference, true);
+        
         const formattedPercent = formatPercentage(percent);
 
         absoluteChange.textContent = formattedDifference;

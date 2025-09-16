@@ -104,7 +104,6 @@ const page = `<!DOCTYPE html>
       document.querySelectorAll('.currency-prefix').forEach((el) => {
         el.textContent = currencyPrefix;
       });
-
       const MAX_DECIMAL_PLACES = 6;
 
       const limitDecimalPlaces = (value, decimalPlaces = MAX_DECIMAL_PLACES) => {

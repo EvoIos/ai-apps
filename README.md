@@ -20,6 +20,7 @@ npm start
 
 默认会在 `http://localhost:3000` 启动服务，打开浏览器即可使用涨跌幅计算器。
 
+
 如需自定义颜色方案或货币前缀，可访问 `http://localhost:3000/settings` 进行配置。
 
 ## 目录结构

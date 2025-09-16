@@ -1,0 +1,17 @@
+{
+  "name": "ai-apps",
+  "version": "1.0.0",
+  "description": "Price change calculator web app using Hono and Tailwind CSS",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@hono/node-server": "^1.19.2",
+    "hono": "^4.9.7"
+  }
+}
